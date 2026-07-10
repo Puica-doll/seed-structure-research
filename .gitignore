@@ -1,0 +1,24 @@
+# Generated images — too large for GitHub (~10GB)
+experiment/images/
+
+# Virtual environment
+venv/
+
+# Model weights
+sd15_model/
+
+# Node modules
+node_modules/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Temp Word lock files
+~$*
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
