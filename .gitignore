@@ -22,3 +22,17 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+
+# Old draft versions
+seed_structure_paper_FINAL.docx
+seed_structure_paper_FINAL_v2.docx
+seed_structure_paper_working_draft.docx
+seed_structure_paper_v*.docx
+
+# Internal build tooling
+build_paper_docx.js
+package.json
+package-lock.json
+
+# Internal content working folder
+content/

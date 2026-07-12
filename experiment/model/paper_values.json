@@ -1,0 +1,33 @@
+{
+  "total_images": 50000,
+  "seeds_per_prompt": 1000,
+  "output_types_count": 5,
+  "prompts_per_type": 10,
+  "overall_baseline_fpar": 0.2173,
+  "overall_baseline_fpar_pct": 21.7,
+  "overall_model_fpar": 0.6404,
+  "overall_model_fpar_pct": 64.0,
+  "improvement_pp": 42.3,
+  "seeds_flagged_good": 12210,
+  "seeds_flagged_good_pct": 24.4,
+  "best_output_type": "Line Chart",
+  "best_type_fpar": 0.7163,
+  "worst_output_type": "Network Diagram",
+  "worst_type_fpar": 0.014,
+  "top_feature": "seed_bit_03",
+  "top_feature_importance": 0.7159,
+  "per_type_baseline_fpar": {
+    "bar_chart": 0.0722,
+    "line_chart": 0.7163,
+    "scatter_plot": 0.099,
+    "network_diagram": 0.014,
+    "flowchart": 0.185
+  },
+  "per_type_model_fpar": {
+    "bar_chart": 0.3895,
+    "line_chart": 0.7163,
+    "scatter_plot": 0.0,
+    "network_diagram": 0.0,
+    "flowchart": 0.2881
+  }
+}

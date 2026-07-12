@@ -1,0 +1,29 @@
+[
+  {
+    "name": "XGBoost",
+    "accuracy": 0.8404,
+    "precision": 0.6176,
+    "recall": 0.6972,
+    "f1": 0.655,
+    "auc_roc": 0.8487,
+    "latency_ms_1000": 2.49
+  },
+  {
+    "name": "MLP (128-128)",
+    "accuracy": 0.8504,
+    "precision": 0.6631,
+    "recall": 0.6332,
+    "f1": 0.6478,
+    "auc_roc": 0.8337,
+    "latency_ms_1000": 1.0
+  },
+  {
+    "name": "Logistic Regression",
+    "accuracy": 0.8643,
+    "precision": 0.7034,
+    "recall": 0.6493,
+    "f1": 0.6753,
+    "auc_roc": 0.8587,
+    "latency_ms_1000": 0.14
+  }
+]

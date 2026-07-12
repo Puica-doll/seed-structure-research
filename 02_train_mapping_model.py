@@ -28,8 +28,12 @@ from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import (
     classification_report, confusion_matrix,
-    accuracy_score, precision_score, recall_score, f1_score
+    accuracy_score, precision_score, recall_score, f1_score,
+    roc_auc_score
 )
+from sklearn.neural_network import MLPClassifier
+from sklearn.linear_model import LogisticRegression
+import time
 import xgboost as xgb
 
 # ── Configuration ─────────────────────────────────────────────────────────────
@@ -159,6 +163,59 @@ def main():
     print(f"  F1        : {f1:.4f}")
     print(f"\nClassification report:\n{classification_report(y_test, y_pred)}")
     print(f"Confusion matrix:\n{confusion_matrix(y_test, y_pred)}")
+
+    # 6b. AUC-ROC for XGBoost
+    y_prob_xgb = model.predict_proba(X_test)[:, 1]
+    auc_xgb    = roc_auc_score(y_test, y_prob_xgb)
+    print(f"  AUC-ROC (XGBoost) : {auc_xgb:.4f}")
+
+    # 6c. Train MLP and Logistic Regression for comparison
+    print("\nTraining comparison models ...")
+
+    t0 = time.time()
+    mlp = MLPClassifier(hidden_layer_sizes=(128, 128), activation="relu",
+                        max_iter=300, random_state=RANDOM_STATE)
+    mlp.fit(X_train, y_train)
+    latency_mlp = (time.time() - t0) * 1000 / len(X_test)
+
+    t0 = time.time()
+    lr = LogisticRegression(max_iter=500, random_state=RANDOM_STATE, n_jobs=-1)
+    lr.fit(X_train, y_train)
+    latency_lr = (time.time() - t0) * 1000 / len(X_test)
+    latency_xgb_ms = None  # measured below
+
+    def eval_model(m, name, X_te, y_te):
+        yp   = m.predict(X_te)
+        yprob = m.predict_proba(X_te)[:, 1]
+        t0 = time.time()
+        for _ in range(100): m.predict(X_te[:1000])
+        lat = (time.time() - t0) / 100 * 1000  # ms per 1000 samples
+        return {
+            "name"     : name,
+            "accuracy" : round(float(accuracy_score(y_te, yp)), 4),
+            "precision": round(float(precision_score(y_te, yp, zero_division=0)), 4),
+            "recall"   : round(float(recall_score(y_te, yp, zero_division=0)), 4),
+            "f1"       : round(float(f1_score(y_te, yp, zero_division=0)), 4),
+            "auc_roc"  : round(float(roc_auc_score(y_te, yprob)), 4),
+            "latency_ms_1000": round(lat, 2),
+        }
+
+    res_xgb = eval_model(model, "XGBoost",            X_test, y_test)
+    res_mlp = eval_model(mlp,   "MLP (128-128)",       X_test, y_test)
+    res_lr  = eval_model(lr,    "Logistic Regression", X_test, y_test)
+
+    comparison = [res_xgb, res_mlp, res_lr]
+    print("\nModel comparison (test set):")
+    print(f"  {'Model':<22} {'Acc':>6} {'Prec':>6} {'Rec':>6} {'F1':>6} {'AUC':>6} {'ms/1k':>8}")
+    for r in comparison:
+        print(f"  {r['name']:<22} {r['accuracy']:>6.4f} {r['precision']:>6.4f} "
+              f"{r['recall']:>6.4f} {r['f1']:>6.4f} {r['auc_roc']:>6.4f} "
+              f"{r['latency_ms_1000']:>8.2f}")
+
+    comp_path = MODEL_DIR / "model_comparison.json"
+    with open(comp_path, "w") as f:
+        json.dump(comparison, f, indent=2)
+    print(f"  Saved: {comp_path.name}")
 
     # 7. FPAR simulation
     # Simulate: instead of random seed, use model to pre-select seeds

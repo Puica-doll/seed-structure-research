@@ -1,0 +1,35 @@
+Seed-Structure Mapping Model — Training Report
+==================================================
+Dataset          : 50,000 samples
+Output types     : 5
+Seed range       : 0 – 999
+Acceptance thresh: 0.7
+Baseline FPAR    : 0.2173 (21.7%)
+
+Model: XGBoost (n_estimators=500, max_depth=6, lr=0.05)
+CV F1 (5-fold)  : 0.6542 ± 0.0069
+
+Test Set Results:
+  Accuracy       : 0.8404
+  Precision      : 0.6176
+  Recall         : 0.6972
+  F1             : 0.6550
+
+FPAR Simulation:
+  Baseline FPAR  : 0.2173
+  Model FPAR     : 0.6404
+  Improvement    : +42.3 pp
+  Seeds selected : 12,210 / 50,000
+
+Top 10 Features:
+             feature  importance
+   type_scatter_plot    0.715921
+type_network_diagram    0.088177
+     type_line_chart    0.070177
+      type_flowchart    0.036589
+      type_bar_chart    0.030846
+         seed_bit_03    0.005985
+         seed_bit_02    0.005927
+         seed_bit_06    0.005918
+         seed_bit_07    0.005910
+         seed_bit_01    0.005861

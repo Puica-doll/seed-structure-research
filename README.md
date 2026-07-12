@@ -1,63 +1,74 @@
 # Seed-Structure Mapping for AI-Generated Scientific Visualizations
 
 **Author:** Diana Ticudean  
-**Affiliation:** Technical University of Cluj-Napoca  
-**Status:** Active experiment — data collection in progress (July 2026)
+**Affiliation:** Technical University of Cluj-Napoca, Faculty of Industrial Engineering, Robotics and Management of Production  
+**Status:** Complete — paper finalized July 2026
 
 ---
 
 ## Overview
 
-This repository contains the code and working paper for an ongoing research project investigating whether the random seed used in diffusion-based image generation models deterministically influences the structural fidelity of the output — specifically for scientific visualizations such as charts, diagrams, and flowcharts.
+This repository contains the full code, data, and paper for a research project investigating whether the random seed used in diffusion-based image generation models deterministically influences the structural fidelity of the output — specifically for scientific visualizations such as charts, diagrams, and flowcharts.
 
-The core hypothesis: because Stable Diffusion with a DDIM scheduler is fully deterministic, the same seed always produces the same output. This means seeds can be characterized in advance as "structurally favorable" or "structurally unfavorable" for a given output type — without generating the image first.
+**Core finding:** A lightweight XGBoost mapping model trained on 50,000 seed-prompt-fidelity triples improves first-pass acceptance rate from 21.7% (random selection) to 64.0% — an absolute gain of 42.3 percentage points. Feature importance analysis reveals that output type accounts for 94.2% of predictive weight, establishing that structural achievability is primarily type-determined rather than seed-determined within SD 1.5.
 
 This work builds directly on:
 > Ticudean, D. (2026). *The PRNG Trap in Browser Simulations*. Zenodo. https://doi.org/10.5281/zenodo.21235031
 
 ---
 
+## Paper
+
+**Title:** Towards Reproducible AI-Generated Scientific Visualizations: A Seed-Structure Mapping Approach for Structured Output Optimization in Diffusion-Based Models
+
+The final paper is available in this repository as `Towards Reproducible AI-Generated Scientific Visualizations_Final.docx`
+
+---
+
 ## Repository Structure
 
 ```
-├── 00_test_setup.py               # Environment verification (generates 5 test images)
-├── 01_generate_and_score.py       # Main experiment: 50,000 image generation + CV scoring
-├── build_paper_docx.js            # Builds the working paper as a .docx file
-├── seed_structure_paper_working_draft.docx   # Working paper (Sections 1–4 complete)
+├── 00_test_setup.py                    # Environment verification (5 test images)
+├── 01_generate_and_score.py            # Main experiment: 50,000 images + CV scoring
+├── 02_train_mapping_model.py           # Train XGBoost, MLP, LR; compute AUC-ROC
+├── 03_evaluate.py                      # Generate figures and evaluation report
+├── Towards Reproducible AI-Generated Scientific Visualizations_Final.docx
 ├── experiment/
-│   ├── results.csv                # Fidelity scores per seed/prompt (grows as experiment runs)
-│   └── test_run/                  # 5 sample images from environment verification
+│   ├── results.csv                     # 50,000 rows: seed, output_type, fidelity_score
+│   ├── figures/                        # All paper figures (PNG)
+│   └── model/                          # Trained model + all numeric outputs
 └── README.md
 ```
 
-> **Note:** The `experiment/images/` folder (~10 GB, 50,000 PNG files) is excluded from this repository via `.gitignore`. The `results.csv` file contains all scoring data needed to reproduce the analysis.
+> `experiment/images/` (~10 GB, 50,000 PNGs) and `sd15_model/` are excluded via `.gitignore`.  
+> `results.csv` contains all data needed to reproduce the analysis without regenerating images.
 
 ---
 
-## Experiment Design
+## Key Results
 
-| Parameter | Value |
+| Metric | Value |
 |---|---|
-| Model | Stable Diffusion 1.5 (`v1-5-pruned-emaonly.safetensors`) |
-| Scheduler | DDIM (deterministic) |
-| Inference steps | 20 |
-| Guidance scale | 7.5 |
-| Image size | 512 × 512 |
-| Seeds | 0 – 999 (1,000 per prompt) |
-| Output types | 5 (bar chart, line chart, scatter plot, network diagram, flowchart) |
-| Prompts per type | 10 |
 | Total images | 50,000 |
-| Hardware | NVIDIA GeForce RTX 3070 Laptop GPU (8 GB VRAM) |
+| Baseline FPAR (random seed) | 21.7% |
+| Model-guided FPAR | 64.0% |
+| Improvement | +42.3 percentage points |
+| XGBoost AUC-ROC | 0.849 |
+| Top feature | type_scatter_plot = 0.716 importance |
 
-### Output Types and Structural Fidelity Scoring
+### Per-type FPAR
 
-Each generated image is automatically scored using a computer vision pipeline (OpenCV) for structural fidelity — measuring how closely the image matches the specified structural specification (e.g., correct number of bars, correct ordering, correct node count).
-
-Scores range from 0.0 to 1.0. Images scoring ≥ 0.70 are classified as "accepted."
+| Output Type | Baseline | Model-Guided | Improvement |
+|---|---|---|---|
+| Bar Chart | 7.2% | 39.0% | +31.7 pp |
+| Line Chart | 71.6% | 71.6% | 0.0 pp |
+| Scatter Plot | 9.9% | — | not achievable in SD 1.5 |
+| Network Diagram | 1.4% | — | not achievable in SD 1.5 |
+| Flowchart | 18.5% | 28.8% | +10.3 pp |
 
 ---
 
-## Running the Experiment
+## Reproducing the Results
 
 ### Prerequisites
 
@@ -65,39 +76,42 @@ Scores range from 0.0 to 1.0. Images scoring ≥ 0.70 are classified as "accepte
 python -m venv venv
 venv\Scripts\activate
 pip install torch==2.5.1+cu121 torchvision==0.20.1+cu121 --index-url https://download.pytorch.org/whl/cu121
-pip install diffusers transformers accelerate opencv-python scikit-learn xgboost pandas
+pip install diffusers transformers accelerate opencv-python scikit-learn xgboost pandas matplotlib seaborn
 ```
 
-Download the model weights (required, not included in repo):
+Download model weights (not included in repo):
 ```bash
-hf download stable-diffusion-v1-5/stable-diffusion-v1-5 v1-5-pruned-emaonly.safetensors --local-dir sd15_model
+huggingface-cli download stable-diffusion-v1-5/stable-diffusion-v1-5 v1-5-pruned-emaonly.safetensors --local-dir sd15_model
 ```
 
-### Verify environment
+### Run pipeline
+
 ```bash
-python 00_test_setup.py
+python 00_test_setup.py           # Verify environment
+python 01_generate_and_score.py   # Generate + score 50,000 images (resumable)
+python 02_train_mapping_model.py  # Train and compare models
+python 03_evaluate.py             # Generate figures and report
 ```
-
-### Run experiment (resumable)
-```bash
-python 01_generate_and_score.py
-```
-
-The experiment is fully resumable — if interrupted, re-run the same command and it continues from where it left off.
 
 ---
 
-## Paper
+## Experimental Setup
 
-The working paper is available in this repository as `seed_structure_paper_working_draft.docx`.
-
-**Title:** Towards Reproducible AI-Generated Scientific Visualizations: A Seed-Structure Mapping Approach for Structured Output Optimization in Diffusion-Based Models
-
-Sections 1–4 are complete. Sections 5–8 (Discussion, Conclusion, Future Work) will be written after experimental results are available.
+| Parameter | Value |
+|---|---|
+| Model | Stable Diffusion 1.5 |
+| Scheduler | DDIM (deterministic) |
+| Denoising steps | 50 |
+| Guidance scale | 7.5 |
+| Image resolution | 512 × 512 px |
+| Seeds | 0 – 999 |
+| Prompts per output type | 10 |
+| Total images | 50,000 |
+| Hardware | NVIDIA GeForce RTX 3070 Laptop GPU (8 GB VRAM) |
+| Framework | HuggingFace Diffusers 0.27 / PyTorch 2.1 / CUDA 12.1 |
 
 ---
 
 ## License
 
-Code: MIT  
-Paper: CC BY 4.0
+Code: MIT | Paper: CC BY 4.0
