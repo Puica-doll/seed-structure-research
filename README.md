@@ -1,6 +1,6 @@
 # Seed-Structure Mapping for AI-Generated Scientific Visualizations
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21324007.svg)](https://doi.org/10.5281/zenodo.21324007)
+[[DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21324007.svg)](https://doi.org/10.5281/zenodo.21324007)
 
 **Author:** Diana Ticudean  
 **Affiliation:** Technical University of Cluj-Napoca, Faculty of Industrial Engineering, Robotics and Management of Production  
