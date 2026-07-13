@@ -1,8 +1,10 @@
 # Seed-Structure Mapping for AI-Generated Scientific Visualizations
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21324007.svg)](https://doi.org/10.5281/zenodo.21324007)
+
 **Author:** Diana Ticudean  
 **Affiliation:** Technical University of Cluj-Napoca, Faculty of Industrial Engineering, Robotics and Management of Production  
-**Status:** Complete — paper finalized July 2026
+**Status:** Complete — paper published July 2026
 
 ---
 
@@ -21,7 +23,11 @@ This work builds directly on:
 
 **Title:** Towards Reproducible AI-Generated Scientific Visualizations: A Seed-Structure Mapping Approach for Structured Output Optimization in Diffusion-Based Models
 
-The final paper is available in this repository as `Towards Reproducible AI-Generated Scientific Visualizations_Final.docx`
+The final paper is available as a preprint on Zenodo:
+
+> **Ticudean, D. (2026).** Towards Reproducible AI-Generated Scientific Visualizations: A Seed-Structure Mapping Approach for Structured Output Optimization in Diffusion-Based Models. *Zenodo*. https://doi.org/10.5281/zenodo.21324007
+
+The manuscript file is also available in this repository as `Towards Reproducible AI-Generated Scientific Visualizations_Final.docx`
 
 ---
 
@@ -111,6 +117,25 @@ python 03_evaluate.py             # Generate figures and report
 | Framework | HuggingFace Diffusers 0.27 / PyTorch 2.1 / CUDA 12.1 |
 
 ---
+
+---
+
+## Citation
+
+If you use this code or dataset, please cite:
+
+```bibtex
+@article{ticudean2026seed,
+  author    = {Diana Ticudean},
+  title     = {Towards Reproducible {AI}-Generated Scientific Visualizations:
+               A Seed-Structure Mapping Approach for Structured Output
+               Optimization in Diffusion-Based Models},
+  year      = {2026},
+  doi       = {10.5281/zenodo.21324007},
+  url       = {https://zenodo.org/records/21324007},
+  publisher = {Zenodo}
+}
+```
 
 ## License
 

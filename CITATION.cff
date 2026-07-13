@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+title: >-
+  Towards Reproducible AI-Generated Scientific Visualizations:
+  A Seed-Structure Mapping Approach for Structured Output
+  Optimization in Diffusion-Based Models
+message: >-
+  If you use this software or dataset, please cite it using
+  the metadata from this file.
+type: software
+authors:
+  - family-names: Ticudean
+    given-names: Diana
+    orcid: "https://orcid.org/0009-0007-1603-2436"
+    affiliation: >-
+      Technical University of Cluj-Napoca, Faculty of Industrial
+      Engineering, Robotics and Management of Production
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.21324007
+    description: Zenodo preprint
+repository-code: "https://github.com/Puica-doll/seed-structure-research"
+url: "https://zenodo.org/records/21324007"
+abstract: >-
+  Code and data for a study investigating seed-structure mapping
+  in Stable Diffusion 1.5 for structured scientific visualization
+  generation. Includes the 50,000-image experiment pipeline,
+  XGBoost mapping model, and evaluation scripts. Key result:
+  first-pass acceptance rate improved from 21.7% to 64.0% under
+  model-guided seed pre-selection.
+keywords:
+  - diffusion models
+  - seed selection
+  - structural fidelity
+  - scientific visualization
+  - reproducibility
+  - XGBoost
+  - image generation
+license: MIT
+date-released: "2026-07-13"
